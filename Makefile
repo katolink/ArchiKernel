@@ -4,8 +4,8 @@ SUBLEVEL = 31
 EXTRAVERSION =
 NAME = Sneaky Weasel
 
-DEVICE_FLAGS = -marm -march=armv7-a -mcpu=cortex-a9 -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp
-ARCHIKERNEL_FLAGS = 
+DEVICE_FLAGS = -marm -march=armv7-a -mcpu=cortex-a9 -mtune=cortex-a9 -mfpu=neon -mfloat-abi=softfp -fsection-anchors
+ARCHIKERNEL_FLAGS = -Ofast -DNDEBUG -funsafe-loop-optimizations -fivopts -ftree-loop-im -ftree-loop-ivcanon -funswitch-loops -frename-registers -fomit-frame-pointer -fgcse-sm -fgcse-las -fweb -ftracer -fipa-pta
 
 # *DOCUMENTATION*
 # To see a list of typical targets execute "make help"
@@ -251,8 +251,8 @@ CONFIG_SHELL := $(shell if [ -x "$$BASH" ]; then echo $$BASH; \
 
 HOSTCC       = gcc
 HOSTCXX      = g++
-HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -Ofast -fomit-frame-pointer
-HOSTCXXFLAGS = -Ofast
+HOSTCFLAGS   = -Wall -Wmissing-prototypes -Wstrict-prototypes -fomit-frame-pointer $(ARCHIKERNEL_FLAGS)
+HOSTCXXFLAGS = $(ARCHIKERNEL_FLAGS)
 
 # Decide whether to build built-in, modular, or both.
 # Normally, just do built-in.
