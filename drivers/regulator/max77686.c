@@ -515,6 +515,7 @@ static int max77686_set_voltage(struct regulator_dev *rdev,
 		printk(PMIC_REG_DEBUG "max77686: id=%d, org=%x, val=%x",
 			rdev_get_id(rdev), org, i);
 #endif
+#endif
 	ret = max77686_update_reg(i2c, reg, i << shift, mask << shift);
 	*selector = i;
 
