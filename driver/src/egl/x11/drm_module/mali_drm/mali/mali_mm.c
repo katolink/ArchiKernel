@@ -19,29 +19,29 @@
 #define MALI_MM_ALIGN_MASK ( (1 << MALI_MM_ALIGN_SHIFT) - 1)
 
 
-static void *mali_sman_mm_allocate( void *private, unsigned long size, unsigned alignment )
+static void *mali_sman_mm_allocate(void *private, unsigned long size, unsigned alignment)
 {
 	printk(KERN_ERR "DRM: %s\n", __func__);
 	return NULL;
 }
 
-static void mali_sman_mm_free( void *private, void *ref )
+static void mali_sman_mm_free(void *private, void *ref)
 {
 	printk(KERN_ERR "DRM: %s\n", __func__);
 }
 
-static void mali_sman_mm_destroy( void *private )
+static void mali_sman_mm_destroy(void *private)
 {
 	printk(KERN_ERR "DRM: %s\n", __func__);
 }
 
-static unsigned long mali_sman_mm_offset( void *private, void *ref )
+static unsigned long mali_sman_mm_offset(void *private, void *ref)
 {
 	printk(KERN_ERR "DRM: %s\n", __func__);
 	return ~((unsigned long)ref);
 }
 
-static int mali_fb_init( struct drm_device *dev, void *data, struct drm_file *file_priv )
+static int mali_fb_init(struct drm_device *dev, void *data, struct drm_file *file_priv)
 {
 	drm_mali_private_t *dev_priv = dev->dev_private;
 	drm_mali_fb_t *fb = data;
@@ -59,7 +59,8 @@ static int mali_fb_init( struct drm_device *dev, void *data, struct drm_file *fi
 		ret = drm_sman_set_manager(&dev_priv->sman, VIDEO_TYPE, &sman_mm);
 	}
 
-	if (ret) {
+	if (ret)
+	{
 		DRM_ERROR("VRAM memory manager initialisation error\n");
 		mutex_unlock(&dev->struct_mutex);
 		return ret;
@@ -84,7 +85,7 @@ static int mali_drm_alloc(struct drm_device *dev, struct drm_file *file_priv, vo
 
 	mutex_lock(&dev->struct_mutex);
 
-	if (0 == dev_priv->vram_initialized )
+	if (0 == dev_priv->vram_initialized)
 	{
 		DRM_ERROR("Attempt to allocate from uninitialized memory manager.\n");
 		mutex_unlock(&dev->struct_mutex);
@@ -93,15 +94,18 @@ static int mali_drm_alloc(struct drm_device *dev, struct drm_file *file_priv, vo
 
 	mem->size = (mem->size + MALI_MM_ALIGN_MASK) >> MALI_MM_ALIGN_SHIFT;
 	item = drm_sman_alloc(&dev_priv->sman, pool, mem->size, 0,
-			      (unsigned long)file_priv);
+	                      (unsigned long)file_priv);
 
 	mutex_unlock(&dev->struct_mutex);
+
 	if (item)
 	{
 		mem->offset = dev_priv->vram_offset + (item->mm->offset(item->mm, item->mm_info) << MALI_MM_ALIGN_SHIFT);
 		mem->free = item->user_hash.key;
 		mem->size = mem->size << MALI_MM_ALIGN_SHIFT;
-	} else {
+	}
+	else
+	{
 		mem->offset = 0;
 		mem->size = 0;
 		mem->free = 0;
@@ -137,7 +141,7 @@ static int mali_fb_alloc(struct drm_device *dev, void *data, struct drm_file *fi
 static int mali_ioctl_mem_init(struct drm_device *dev, void *data, struct drm_file *file_priv)
 {
 	drm_mali_private_t *dev_priv = dev->dev_private;
-	drm_mali_mem_t *mem= data;
+	drm_mali_mem_t *mem = data;
 	int ret;
 	dev_priv = dev->dev_private;
 	printk(KERN_ERR "DRM: %s\n", __func__);
@@ -145,7 +149,8 @@ static int mali_ioctl_mem_init(struct drm_device *dev, void *data, struct drm_fi
 	mutex_lock(&dev->struct_mutex);
 	ret = drm_sman_set_range(&dev_priv->sman, MEM_TYPE, 0, mem->size >> MALI_MM_ALIGN_SHIFT);
 
-	if (ret) {
+	if (ret)
+	{
 		DRM_ERROR("MEM memory manager initialisation error\n");
 		mutex_unlock(&dev->struct_mutex);
 		return ret;
@@ -157,7 +162,7 @@ static int mali_ioctl_mem_init(struct drm_device *dev, void *data, struct drm_fi
 }
 
 static int mali_ioctl_mem_alloc(struct drm_device *dev, void *data,
-			       struct drm_file *file_priv)
+                                struct drm_file *file_priv)
 {
 
 	printk(KERN_ERR "DRM: %s\n", __func__);
@@ -170,11 +175,17 @@ static drm_local_map_t *mem_reg_init(struct drm_device *dev)
 	drm_local_map_t *map;
 	printk(KERN_ERR "DRM: %s\n", __func__);
 
-	list_for_each_entry(entry, &dev->maplist, head) {
+	list_for_each_entry(entry, &dev->maplist, head)
+	{
 		map = entry->map;
+
 		if (!map)
+		{
 			continue;
-		if (map->type == _DRM_REGISTERS) {
+		}
+
+		if (map->type == _DRM_REGISTERS)
+		{
 			return map;
 		}
 	}
@@ -190,7 +201,9 @@ int mali_idle(struct drm_device *dev)
 	printk(KERN_ERR "DRM: %s\n", __func__);
 
 	if (dev_priv->idle_fault)
+	{
 		return 0;
+	}
 
 	return 0;
 }
@@ -201,7 +214,10 @@ void mali_lastclose(struct drm_device *dev)
 	drm_mali_private_t *dev_priv = dev->dev_private;
 	printk(KERN_ERR "DRM: %s\n", __func__);
 
-	if (!dev_priv) return;
+	if (!dev_priv)
+	{
+		return;
+	}
 
 	mutex_lock(&dev->struct_mutex);
 	drm_sman_cleanup(&dev_priv->sman);
@@ -210,12 +226,13 @@ void mali_lastclose(struct drm_device *dev)
 	mutex_unlock(&dev->struct_mutex);
 }
 
-void mali_reclaim_buffers_locked(struct drm_device * dev, struct drm_file *file_priv)
+void mali_reclaim_buffers_locked(struct drm_device *dev, struct drm_file *file_priv)
 {
 	drm_mali_private_t *dev_priv = dev->dev_private;
 	printk(KERN_ERR "DRM: %s\n", __func__);
 
 	mutex_lock(&dev->struct_mutex);
+
 	if (drm_sman_owner_clean(&dev_priv->sman, (unsigned long)file_priv))
 	{
 		mutex_unlock(&dev->struct_mutex);
@@ -232,7 +249,8 @@ void mali_reclaim_buffers_locked(struct drm_device * dev, struct drm_file *file_
 	return;
 }
 
-struct drm_ioctl_desc mali_ioctls[] = {
+struct drm_ioctl_desc mali_ioctls[] =
+{
 	DRM_IOCTL_DEF(DRM_MALI_FB_ALLOC, mali_fb_alloc, DRM_AUTH),
 	DRM_IOCTL_DEF(DRM_MALI_FB_FREE, mali_drm_free, DRM_AUTH),
 	DRM_IOCTL_DEF(DRM_MALI_MEM_INIT, mali_ioctl_mem_init, DRM_AUTH | DRM_MASTER | DRM_ROOT_ONLY),

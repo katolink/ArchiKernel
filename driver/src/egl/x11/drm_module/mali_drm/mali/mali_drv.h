@@ -11,17 +11,17 @@
 #ifndef _MALI_DRV_H_
 #define _MALI_DRV_H_
 
-#define DRIVER_AUTHOR		"ARM"
-#define DRIVER_NAME		"mali_drm"
-#define DRIVER_DESC		"DRM module for Mali-200, Mali-400"
-#define DRIVER_DATE		"20100520"
-#define DRIVER_MAJOR		0
-#define DRIVER_MINOR		1
-#define DRIVER_PATCHLEVEL	0
+#define DRIVER_AUTHOR       "ARM"
+#define DRIVER_NAME     "mali_drm"
+#define DRIVER_DESC     "DRM module for Mali-200, Mali-400"
+#define DRIVER_DATE     "20100520"
+#define DRIVER_MAJOR        0
+#define DRIVER_MINOR        1
+#define DRIVER_PATCHLEVEL   0
 
 #include "drm_sman.h"
 
-typedef struct drm_mali_private 
+typedef struct drm_mali_private
 {
 	drm_local_map_t *mmio;
 	unsigned int idle_fault;
